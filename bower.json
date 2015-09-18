@@ -1,0 +1,24 @@
+{
+  "name": "mnm",
+  "version": "0.9.0",
+  "authors": [
+    "JEiten <jonathan.eiten@mojotouch.com>"
+  ],
+  "description": "Include modified node modules on the client side.",
+  "moduleType": [
+    "globals"
+  ],
+  "main": "src/js/mnm.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/joneit/mnm.git"
+  }
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
