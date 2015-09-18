@@ -9,10 +9,6 @@
     "globals"
   ],
   "main": "src/js/mnm.js",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/joneit/mnm.git"
-  }
   "license": "MIT",
   "ignore": [
     "**/.*",
