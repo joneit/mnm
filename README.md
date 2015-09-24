@@ -1,42 +1,48 @@
 # mnm
 Consumes "modified node modules" on the client side.
 
-## Introduction
-Introduces two globals objects, `module` and `module.exports`, plus a `require()` function for use on the client side as a simple and light-weight alternative to Browserify for consuming modified node modules. Not that there's anything wrong with Browserify, but when you only have a 2 to 3 file to include, this is fine.
+## What is `mnm`?
+Used only on the client side, `mnm` ntroduces two globals, a Node.js-like `module` object and `require()` function, as a simple and light-weight alternative to Browserify for consuming _modified node modules._ Not that there's anything wrong with Browserify, but when you only have 2 or 3 files to include, this is fine.
 
 ## What are "modified node modules?"
-
 Modified node modules are Node.js modules encapsulated in an IIFE. These files are thus simultaneously:
 
 1. Node files consumed on the server side (via Node's `require` function).
 2. Raw javascript files consumed on the client side (via `<script>` tags).
 
-The purpose of the IIFE is to keep the module's contents private when included as is on the client side.
-
-## What is mnm?
-Used only on the cient side, `mnm` creates a light-weight `module` object with an empty `module.exports` object. These are fed as parameters to the IIFE in a "modified node module."
+The purpose of the IIFE is to keep the module's contents private when included _as is_ on the client side. It is superfluous when consumed by Node.js (which provides its own closure) but innocuous.
 
 ## Usage
-There are two functions, one to cache the modules; and one to require them.
-#### module.mnm()
+There are `module` and `exports` objects and a `require()` function, all used exactly as in Node.js. There is also a `module.mnm()` function used to cache the modules between `<script>` tags.
+
+##### `module`
+This comes with an empty plain object, `module.exports`, which can be set to a whole new API object of your own creation, again exactly as in Node.js, _e.g.,_ `module.exports = yourAPI`.
+
+##### `exports`
+A formal parameter of the IIFE, this is thus a local reference to the actual parameter `module.exports`. Use it exactly as you would in a real Node.js module.
+
+_Caution:_ It carries exactly the same caveat as in Node.js though, which is not to use it as an l-value for assigning a whole API. Doing so will uselessly set the local `exports` but not `module`'s. Instead use `module.exports` for that purpose.
+
+##### `module.mnm()`
 Simply call `module.mnm('yourmodule')` between each of your (synchronous) `<script src="file.js">...</script>` include elements.
 
-For the curious, all the `mnm` method is doing here is:
+For the curious, all that's happening here is:
 
-1. Add a new entry to the `module.modules` hash (using the name given) and set it to reference `module.exports` (_i.e.,_ whatever came back from the included script).
-2. Reinitialize `module.exports` to a new empty object for use by the next script (af any).
+1. The `module.modules` hash is getting a new entry with the name given, which is being set to reference the current `module.exports` (_i.e.,_ whatever came back from the script just included).
+2. `module.exports` is being reinitialized to a new empty object for use by the next script.
 
-Violà!
+_Violà!_
 
-#### require()
-There is also a simple `require()` function for dereferencing the modules hash. The only caveat for using this `require()` is that files need to be included "bottom-up" (so circular references are not permitted).
+##### `require()`
+There is also a simple `require()` function for dereferencing the modules hash. The only caveat for using this `require()` is that files need to be included "bottom-up" (so no circular references are allowed).
+
+### Root script
+The `require()` calls should appear in every node of the include tree excpet for the terminal nodes. In particular, at least one `require()` call must appear in your main (or "root") script. Obviously the file includes should occur before their references. Therefore, simply place this root script at the bottom of your `<body>...</body>` element; or wrap it in a `window.onload` (or DOM Ready) event.
+
+> If you wish to place it in its own file and include it in your HTML file with a final `<script>` tag, note that because it's never referenced in a `require()` call, this final tag does not need to be cached (i.e., followed by an `module.npm()` call).
 
 ## Summary
-So this is all pretty simple: Your `module.mnm()` calls are applied flatly in your HTML _at file include time_ while your `require()` calls appear in your modified node module files to fetch code _at execution time_.
-
-The `require()` calls typcially appear in every node of the include tree, including in particular your main (root) script, but excluding the terminal nodes.
-
-Your root script includes the tip of the include tree, typically wrapped in a window.onload event. This script could be in your HTML file at the bottom of your `<body>...</body>` element, or wrapped in a `window.onload` event. If wrapped, it could be included with a final `<script>` tag. This final tag is not cached (not followed by an `module.npm()` call) because it's never referenced in a `require()` call.
+So this is all pretty simple: Your `module.mnm()` calls are applied flatly in your HTML _at file include time_ while your `require()` calls appear in your modified node module files to fetch code _at execution time_, including at least one such call from your root script.
 
 ## Example
 All together now, given a tree of modified node modules such as:
