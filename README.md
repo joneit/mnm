@@ -13,7 +13,7 @@ Modified node modules are Node.js modules encapsulated in an IIFE. These files a
 The purpose of the IIFE is to keep the module's contents private when included _as is_ on the client side. It is superfluous when consumed by Node.js (which provides its own closure) but innocuous.
 
 ## Usage
-There are `module` and `exports` objects and a `require()` function, all used exactly as in Node.js. There is also a `module.mnm()` function used to cache the modules between `<script>` tags.
+There are `module` and `exports` objects and a `require()` function, all used exactly as in Node.js. There is also a `module.mnm()` function, called between between `<script>` tags to cache each module (in the behind-the-scenes `module.modules` hash).
 
 ##### `module`
 This comes with an empty plain object, `module.exports`, which can be set to a whole new API object of your own creation, again exactly as in Node.js, _e.g.,_ `module.exports = yourAPI`.
