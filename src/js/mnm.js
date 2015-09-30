@@ -11,7 +11,7 @@
 window.module = {
     exports: {},
     modules: {},
-    mnm: function (moduleName) {
+    cache: function (moduleName) {
         window.module.modules[moduleName] = window.module.exports;
         window.module.exports = {};
     }

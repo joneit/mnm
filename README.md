@@ -15,7 +15,7 @@ Modified node modules are Node.js modules encapsulated in an IIFE. These files a
 The purpose of the IIFE is to keep the module's contents private when included _as is_ on the client side. It is superfluous when consumed by Node.js (which provides its own closure) but innocuous.
 
 ## Usage
-There are `module` and `exports` objects and a `require()` function, all used exactly as in Node.js. There is also a `module.mnm()` function, called between between `<script>` tags to cache each module (in the behind-the-scenes `module.modules` hash).
+There are `module` and `exports` objects and a `require()` function, all used exactly as in Node.js. There is also a `module.cache()` function, called between between `<script>` tags to cache each module (in the behind-the-scenes `module.modules` hash).
 
 ##### `module`
 This comes with an empty plain object, `module.exports`, which can be set to a whole new API object of your own creation, again exactly as in Node.js, _e.g.,_ `module.exports = yourAPI`.
@@ -25,8 +25,8 @@ A formal parameter of the IIFE, this is thus a local reference to the actual par
 
 _Caution:_ It carries exactly the same caveat as in Node.js though, which is not to use it as an l-value for assigning a whole API. Doing so will uselessly set the local `exports` but not `module`'s. Instead use `module.exports` for that purpose.
 
-##### `module.mnm()`
-Simply call `module.mnm('yourmodule')` between each of your (synchronous) `<script src="file.js">...</script>` include elements.
+##### `module.cache()`
+Simply call `module.cache('yourmodule')` between each of your (synchronous) `<script src="file.js">...</script>` include elements.
 
 For the curious, all that's happening here is:
 
@@ -44,7 +44,7 @@ The `require()` calls should appear in every node of the include tree excpet for
 > If you wish to place it in its own file and include it in your HTML file with a final `<script>` tag, note that because it's never referenced in a `require()` call, this final tag does not need to be cached (i.e., followed by an `module.npm()` call).
 
 ## Summary
-So this is all pretty simple: Your `module.mnm()` calls are applied flatly in your HTML _at file include time_ while your `require()` calls appear in your modified node module files to fetch code _at execution time_, including at least one such call from your root script.
+So this is all pretty simple: Your `module.cache()` calls are applied flatly in your HTML _at file include time_ while your `require()` calls appear in your modified node module files to fetch code _at execution time_, including at least one such call from your root script.
 
 ## Example
 All together now, given a tree of modified node modules such as:
@@ -76,10 +76,10 @@ Your main file (let's call it **index.html**) might look like this:
 <html>
     <head>
         <script src="math.js"></script>
-        <script> module.mnm('math.js'); </script>
+        <script> module.cache('math.js'); </script>
  
         <script src="yada.js"></script>
-        <script> module.mnm('yada.js'); </script>
+        <script> module.cache('yada.js'); </script>
         
         <script>
             window.onload = function () {
