@@ -2,7 +2,9 @@
 Consumes "modified node modules" on the client side.
 
 ## What is `mnm`?
-Used only on the client side, `mnm` ntroduces two globals, a Node.js-like `module` object and `require()` function, as a simple and light-weight alternative to Browserify for consuming _modified node modules._ Not that there's anything wrong with Browserify, but when you only have 2 or 3 files to include, this is fine.
+This is a way to continue to `require()` your modules in the browser without Browserifying your files and without further polluting the global namespace. Not that there's anything wrong with Browserify, but when you only have 2 or 3 files to include, this is fine.
+
+Used only on the client side, `mnm` is a simple and light-weight alternative to Browserify for consuming _modified node modules._ It provides a Node.js-like `module` object and `require()` function.
 
 ## What are "modified node modules?"
 Modified node modules are Node.js modules encapsulated in an IIFE. These files are thus simultaneously:
@@ -66,7 +68,7 @@ Module **yada.js** (an API using `module.exports`):
 })(module, module.exports)
 ```
 
-(Actually the first parameter `module` in the above examples is not really needed in the above since it's a global, but I think it's clearer this way.)
+(Actually the first parameter, `module,` in the above examples is not really needed because it's a global; and exports is only really needed when used. Nevertheless, I think it's clearer this way.)
 
 Your main file (let's call it **index.html**) might look like this:
 ```html
